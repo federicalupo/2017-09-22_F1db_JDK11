@@ -3,7 +3,9 @@ package it.polito.tdp.formulaone;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.formulaone.model.Arco;
 import it.polito.tdp.formulaone.model.Model;
+import it.polito.tdp.formulaone.model.Season;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -22,7 +24,7 @@ public class FXMLController {
     private URL location;
 
     @FXML
-    private ComboBox<?> boxAnno;
+    private ComboBox<Season> boxAnno;
 
     @FXML
     private Button btnSelezionaStagione;
@@ -44,6 +46,17 @@ public class FXMLController {
 
     @FXML
     void doSelezionaStagione(ActionEvent event) {
+    	this.txtResult.clear();
+    	Season stagione = this.boxAnno.getValue();
+    	model.creaGrafo(stagione);
+    	
+    	this.txtResult.appendText("Grafo creato!\n#vertici: "+model.nVertici()+"\n#archi: "+model.nArchi()+"\n");
+    	
+    	this.txtResult.appendText("Arco/Archi di peso max: \n");
+    	
+    	for(Arco a : model.archiMax()) {
+    		this.txtResult.appendText(a.toString()+"\n");
+    	}
 
     }
 
@@ -66,5 +79,7 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model;
+		this.boxAnno.getItems().addAll(this.model.tendina());
+		this.boxAnno.setValue(model.tendina().get(0));
 	}
 }
