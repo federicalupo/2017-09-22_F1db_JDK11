@@ -96,7 +96,7 @@ public class Race {
 	}
 	@Override
 	public String toString() {
-		return  this.name;
+		return  this.raceId+" "+this.name;
 	}
 	
 	

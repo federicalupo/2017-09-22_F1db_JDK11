@@ -66,4 +66,18 @@ public class Model {
 	
 		return archiFiltro;
 	}
+	
+	public List<Race> getTendinaVertici(){
+		List<Race> vertici = new ArrayList<>(this.grafo.vertexSet());
+		
+		return vertici;
+	}
+	
+	public Map<Pilota, Integer> punteggiPilota(Race r, Double probabilita, Long sosta){
+		Simulatore sim = new Simulatore();
+		sim.init(r, probabilita, sosta);
+		sim.run();
+		return sim.getTraguardo();
+		
+	}
 }

@@ -1,10 +1,13 @@
 package it.polito.tdp.formulaone;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.formulaone.model.Arco;
 import it.polito.tdp.formulaone.model.Model;
+import it.polito.tdp.formulaone.model.Pilota;
+import it.polito.tdp.formulaone.model.Race;
 import it.polito.tdp.formulaone.model.Season;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,7 +33,7 @@ public class FXMLController {
     private Button btnSelezionaStagione;
 
     @FXML
-    private ComboBox<?> boxGara;
+    private ComboBox<Race> boxGara;
 
     @FXML
     private Button btnSimulaGara;
@@ -57,11 +60,35 @@ public class FXMLController {
     	for(Arco a : model.archiMax()) {
     		this.txtResult.appendText(a.toString()+"\n");
     	}
+    	
+    	this.boxGara.getItems().clear();
+    	this.boxGara.getItems().addAll(model.getTendinaVertici());
+    	this.boxGara.setValue(model.getTendinaVertici().get(0));
 
     }
 
     @FXML
     void doSimulaGara(ActionEvent event) {
+    	
+    	this.txtResult.clear();
+    	Race r = this.boxGara.getValue();
+    	
+    	try {
+	    	Double prob = Double.valueOf(this.textInputK.getText());
+	    	Long sosta = Long.valueOf(this.textInputK1.getText());
+	    	
+	    	this.txtResult.appendText("Punteggi per pilota: \n");
+	    	Map<Pilota, Integer> mappa = model.punteggiPilota(r, prob, sosta);
+	    	
+	    	for(Pilota p: mappa.keySet()) {
+	    		this.txtResult.appendText(p.toString()+" "+mappa.get(p)+"\n");
+	    	}
+	    	
+    	
+    	
+    	}catch(NumberFormatException nfe) {
+    		this.txtResult.appendText("Inserire valori corretti");
+    	}
 
     }
 

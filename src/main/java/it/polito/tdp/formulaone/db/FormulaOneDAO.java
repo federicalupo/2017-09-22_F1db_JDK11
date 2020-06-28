@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import it.polito.tdp.formulaone.model.Arco;
+import it.polito.tdp.formulaone.model.Pilota;
 import it.polito.tdp.formulaone.model.Race;
 import it.polito.tdp.formulaone.model.Season;
 
@@ -37,7 +38,8 @@ public class FormulaOneDAO {
 	public List<Race> getVertici(Season stagione, Map<Integer, Race> idMap){
 		String sql = "select  * " + 
 				"from races " + 
-				"where year=?";
+				"where year=? "+
+				"order by name";
 		
 		List<Race> vertici = new ArrayList<Race>();
 		try {
@@ -102,6 +104,62 @@ public class FormulaOneDAO {
 			}
 			conn.close();
 			return archi;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Pilota> piloti(Race r){
+		String sql="select results.driverId, driverRef " + 
+				"from results, drivers " + 
+				"where raceId=? " + 
+				"and results.`driverId` = drivers.`driverId` " + 
+				"order by driverId ";
+		List<Pilota> piloti = new ArrayList<>();
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, r.getRaceId());
+			
+			ResultSet rs = st.executeQuery();
+			
+			while (rs.next()) {
+				piloti.add(new Pilota(rs.getInt("driverId"), rs.getString("driverRef")));
+			}
+			conn.close();
+			return piloti;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+
+	public Long getMillisecondi(Race gara, Pilota pilota, Integer nGiro) {
+		String sql="select milliseconds " + 
+				"from lapTimes " + 
+				"where raceId=? " + 
+				"and driverId=? " + 
+				"and lap =? ";
+		Long sec = null;
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, gara.getRaceId());
+			st.setInt(2, pilota.getDriverId());
+			st.setInt(3, nGiro);
+			
+			ResultSet rs = st.executeQuery();
+			
+			if (rs.next()) {
+				sec = Long.valueOf(rs.getInt("milliseconds")); 
+			}
+			
+			conn.close();
+			return sec;
 
 		} catch (SQLException e) {
 			e.printStackTrace();
